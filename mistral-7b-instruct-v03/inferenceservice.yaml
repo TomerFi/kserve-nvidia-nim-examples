@@ -1,0 +1,35 @@
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    autoscaling.knative.dev/target: "10"
+  name: mistral-7b-instruct-v03-2xgpu
+  namespace: nim-kserve-pvc
+spec:
+  predictor:
+    annotations:
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      serving.knative.openshift.io/enablePassthrough: "true"
+      sidecar.istio.io/inject: "true"
+      sidecar.istio.io/rewriteAppHTTPProbers: "true"
+    minReplicas: 1
+    model:
+      modelFormat:
+        name: mistral-7b-instruct-v03
+      resources:
+        limits:
+          nvidia.com/gpu: "2"
+        requests:
+          nvidia.com/gpu: "2"
+      runtime: mistral-7b-instruct-v03
+    nodeSelector:
+      node.kubernetes.io/instance-type: p4d.24xlarge
+    tolerations:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+      - effect: NoSchedule
+        key: odh-notebook
+        operator: Exists

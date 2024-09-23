@@ -1,0 +1,48 @@
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  name: mistral-7b-instruct-v03
+  namespace: nim-kserve-pvc
+spec:
+  containers:
+    - env:
+        - name: NIM_CACHE_PATH
+          value: /mnt/nim/models
+        - name: NGC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              key: NGC_API_KEY
+              name: nvidia-nim-secrets
+      image: nvcr.io/nim/mistralai/mistral-7b-instruct-v03:latest
+      name: kserve-container
+      ports:
+        - containerPort: 8000
+          protocol: TCP
+      resources:
+        limits:
+          cpu: "12"
+          memory: 256Gi
+        requests:
+          cpu: "12"
+          memory: 128Gi
+      volumeMounts:
+        - mountPath: /dev/shm
+          name: dshm
+        - mountPath: /mnt/nim/models
+          name: nim-pvc
+  imagePullSecrets:
+    - name: ngc-secret
+  protocolVersions:
+    - v2
+    - grpc-v2
+  supportedModelFormats:
+    - name: mistral-7b-instruct-v03
+  volumes:
+    - emptyDir:
+        medium: Memory
+        sizeLimit: 128Gi
+      name: dshm
+    - name: nim-pvc
+      persistentVolumeClaim:
+        claimName: nim-pvc
