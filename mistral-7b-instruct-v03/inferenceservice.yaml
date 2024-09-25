@@ -20,9 +20,9 @@ spec:
         name: mistral-7b-instruct-v03
       resources:
         limits:
-          nvidia.com/gpu: "2"
+          nvidia.com/gpu: "1"
         requests:
-          nvidia.com/gpu: "2"
+          nvidia.com/gpu: "1"
       runtime: mistral-7b-instruct-v03
     nodeSelector:
       node.kubernetes.io/instance-type: p4d.24xlarge
