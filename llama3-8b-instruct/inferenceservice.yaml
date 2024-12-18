@@ -28,8 +28,5 @@ spec:
       node.kubernetes.io/instance-type: p4d.24xlarge
     tolerations:
       - effect: NoSchedule
-        key: nvidia.com/gpu
-        operator: Exists
-      - effect: NoSchedule
-        key: odh-notebook
+        key: p4-gpu
         operator: Exists
